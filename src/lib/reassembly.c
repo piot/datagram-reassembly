@@ -53,7 +53,7 @@ int datagramReassemblyReceive(DatagramReassembly* self, FldInStream* inStream)
         CLOG_NOTICE("could not read receive %hu", sequenceId)
         return readErr;
     }
-    CLOG_VERBOSE("sequenceId: %hu", sequenceId)
+    CLOG_VERBOSE("receive sequenceId: %hu", sequenceId)
 
     uint8_t partWithMask;
     int readLengthErr = fldInStreamReadUInt8(inStream, &partWithMask);
@@ -88,11 +88,11 @@ int datagramReassemblyReceive(DatagramReassembly* self, FldInStream* inStream)
         return readOctetCounthErr;
     }
 
-    CLOG_VERBOSE("octets count follows: %hu", octetCountThatFollows)
+    CLOG_VERBOSE("receive octets count follows: %hu", octetCountThatFollows)
     uint8_t* target = self->blob + self->receivedOctetCount;
     fldInStreamReadOctets(inStream, target, octetCountThatFollows);
     self->receivedOctetCount += octetCountThatFollows;
-    CLOG_VERBOSE("octets received so far: %zu", self->receivedOctetCount)
+    CLOG_VERBOSE("receive octets received so far: %zu", self->receivedOctetCount)
 
     self->expectingPart++;
 
@@ -101,7 +101,7 @@ int datagramReassemblyReceive(DatagramReassembly* self, FldInStream* inStream)
         self->isComplete = true;
         self->isReceivingSequence = false;
         self->expectingPart = 0;
-        CLOG_VERBOSE("last part found!")
+        CLOG_VERBOSE("receive: last part found!")
     }
 
     return 0;

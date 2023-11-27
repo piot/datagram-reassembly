@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------------------*/
 #include <datagram-reassembly/write.h>
 #include <flood/out_stream.h>
+#include <clog/clog.h>
 
 void datagramReassemblyWriteInit(DatagramReassemblyWrite* self)
 {
@@ -24,11 +25,13 @@ int datagramReassemblyWriteHeader(
     if (readErr < 0) {
         return readErr;
     }
+    CLOG_VERBOSE("wrote sequenceID: %hu", self->sequenceId)
 
     uint8_t partWithMask = self->part;
     if (isFinalOne) {
         partWithMask |= 0x80;
     }
+    CLOG_VERBOSE("wrote part: %hhu", self->part)
 
     int readLengthErr = fldOutStreamWriteUInt8(outStream, partWithMask);
     if (readLengthErr < 0) {
@@ -39,6 +42,7 @@ int datagramReassemblyWriteHeader(
     if (readOctetCounthErr < 0) {
         return readOctetCounthErr;
     }
+    CLOG_VERBOSE("wrote octet count follows: %hu", octetCount)
 
     return 0;
 }
